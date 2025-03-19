@@ -139,12 +139,56 @@ class Circle {
     }
 }
 
+const barrilImage = new Image();
+barrilImage.src = "Media/Images/barril.png";  // Asegúrate de tener la imagen del barril
+
+class Barril {
+    constructor(radius, speed, imageSrc) {
+        this.posX = Math.random() > 0.5 ? -radius : window_width + radius;
+        this.posY = Math.random() * (window_height / 2) + (window_height / 2); 
+        this.radius = radius * 2;  // El doble de tamaño
+        this.speed = speed;
+        this.dx = this.posX < 0 ? speed : -speed;
+        this.dy = 0.1;  
+        this.image = new Image();
+        this.image.src = imageSrc;
+    }
+
+    draw() {
+        ctx.drawImage(this.image, this.posX - this.radius, this.posY - this.radius, this.radius * 2, this.radius * 2);
+    }
+
+    update() {
+        this.posX += this.dx;
+        this.posY += this.dy; 
+        if (this.posY + this.radius > window_height || this.posY - this.radius < 0) {
+            this.dy = -this.dy; 
+        }
+
+        if (this.posX + this.radius < 0 || this.posX - this.radius > window_width) {
+            this.posX = Math.random() > 0.5 ? -this.radius : window_width + this.radius;
+            this.posY = Math.random() * (window_height / 2) + (window_height / 2);
+        }
+    }
+}
+
 function spawnCircles() {
     if (circles.length < maxCircles) {  // Permitir generar nuevos peces sin detener la generación
         const radius = Math.random() * 20 + 30; 
         const constantSpeed = 1;
         let newCircle = new Circle(radius, constantSpeed, "Media/Images/pez1.png");
         circles.push(newCircle);
+    }
+}
+
+let barriles = [];
+
+function spawnBarriles() {
+    if (barriles.length < maxCircles) {  // Permitir generar nuevos barriles sin detener la generación
+        const radius = Math.random() * 20 + 30; 
+        const constantSpeed = 1;
+        let newBarril = new Barril(radius, constantSpeed, "Media/Images/barril.png");
+        barriles.push(newBarril);
     }
 }
 
@@ -194,6 +238,36 @@ function checkCeboCollision() {
     }
 }
 
+function checkBarrilCollision() {
+    for (let i = 0; i < barriles.length; i++) {
+        let barril = barriles[i];
+        for (let j = 0; j < circles.length; j++) {
+            let circle = circles[j];
+            if (circle.attached) {  // Solo verificar colisión con peces atrapados
+                let dx = barril.posX - circle.posX;
+                let dy = barril.posY - circle.posY;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < barril.radius + circle.radius) {
+                    // Reproducir el sonido de choque
+                    const choqueSound = new Audio("Media/Audio/choque.mp3");
+                    choqueSound.play();
+
+                    circles.splice(j, 1);  // Eliminar el pez atrapado
+                    break;  // Salir del bucle después de eliminar el pez
+                }
+            }
+        }
+    }
+}
+
+function updateBarriles() {
+    barriles.forEach((barril) => {
+        barril.update();  
+        barril.draw();  
+    });
+}
+
 function updateCircles() {
     requestAnimationFrame(updateCircles);  
     drawBackground();  
@@ -203,10 +277,17 @@ function updateCircles() {
         circle.draw();  
     });
 
+    barriles.forEach((barril) => {
+        barril.update();  
+        barril.draw();  
+    });
+
     ctx.drawImage(cebo, window_width / 2 - 20, ceboPosY - 20, 40, 40);  
     checkCeboCollision();
+    checkBarrilCollision();
 }
 
 startTimer();
 spawnCircles();
+spawnBarriles();
 updateCircles();
