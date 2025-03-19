@@ -6,6 +6,15 @@ const window_width = 1000;
 canvas.height = window_height;
 canvas.width = window_width;
 
+canvas.addEventListener("mousemove", (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseY = event.clientY - rect.top;
+
+    // Limitar la posición vertical del cebo dentro del canvas
+    ceboPosY = Math.max(0, Math.min(window_height, mouseY));
+});
+
+
 // Establecer la imagen de fondo del canvas
 const background = new Image();
 background.src = "Media/Images/Fondo_mar.png";
@@ -85,6 +94,10 @@ retryButton.addEventListener("click", () => {
     retryButton.style.display = "none";
     messageDiv.style.display = "none";
 });
+
+const cebo = new Image();
+cebo.src = "Media/Images/cebo.png";  // Ruta de la imagen del cebo
+let ceboPosY = window_height / 2;  // Inicializa el cebo en el centro del canvas
 
 class Circle {
     constructor(y, radius, speed, imageSrc) {
@@ -176,15 +189,30 @@ canvas.addEventListener("click", (event) => {
     });
 });
 
+function checkCeboCollision() {
+    circles.forEach((circle, index) => {
+        let dx = window_width / 2 - circle.posX;
+        let dy = ceboPosY - circle.posY;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < circle.radius + 20) {  // 20 es la mitad del tamaño del cebo
+            explosionSound.cloneNode().play();
+            removedCircles++;
+            updateStats();
+            circles.splice(index, 1);  // Eliminar el pez tocado
+        }
+    });
+}
+
 function updateCircles() {
     requestAnimationFrame(updateCircles);  // Llamada continua a la función
     drawBackground();  // Dibujar el fondo
-    
+
     // Filtrar y eliminar los círculos que han salido de la pantalla
     circles = circles.filter(circle => {
         circle.update();  // Actualizar la posición de cada pez
         circle.draw(ctx);  // Dibujar el pez en el canvas
-        
+
         // Si el pez se ha salido de la pantalla, lo eliminamos
         if (circle.posX + circle.radius < 0 || circle.posX - circle.radius > window_width) {
             return false;  // Eliminar el pez de la lista
@@ -193,7 +221,14 @@ function updateCircles() {
     });
 
     spawnCircles();  // Llamar constantemente a la función para generar un pez
+
+    // Dibujar el cebo
+    ctx.drawImage(cebo, window_width / 2 - 20, ceboPosY - 20, 40, 40);  // Ajustar el tamaño y posición del cebo
+    
+    // Verificar si el cebo colisiona con algún pez
+    checkCeboCollision();
 }
+
 
 spawnCircles();
 updateCircles();
