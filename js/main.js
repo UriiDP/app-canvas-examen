@@ -395,3 +395,10 @@ startTimer();
 spawnCircles();
 spawnBarriles();
 updateCircles();
+
+function initGame() {
+    // Tu código de inicialización del juego
+    // Esto puede incluir la creación de peces, cebo, tiburón, etc.
+    startFishGeneration();
+    updateCircles();
+}
