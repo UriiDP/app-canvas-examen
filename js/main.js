@@ -6,7 +6,7 @@ const window_width = 1000;
 canvas.height = window_height;
 canvas.width = window_width;
 
-const music = new Audio('Media/Audio/chill_guy.mp3');
+const music = new Audio('media/audio/Chill_Guy.mp3');
 music.loop = true;
 
 canvas.addEventListener("click", () => {
@@ -35,7 +35,7 @@ document.addEventListener("mousemove", (event) => {
 });
 
 const background = new Image();
-background.src = "Media/Images/Fondo_mar.png";
+background.src = "media/images/Fondo_mar.png";
 background.onload = drawBackground;
 
 function drawBackground() {
@@ -65,7 +65,7 @@ let timer;
 let tiburones = []; // Almacenará todos los tiburones
 let tiburon; // Almacenará la instancia del tiburón
 
-const explosionSound = new Audio("Media/Audio/collision.mp3");
+const explosionSound = new Audio("media/audio/collision.mp3");
 
 const stats = document.createElement("div");
 stats.style.color = "#fff";
@@ -110,7 +110,7 @@ retryButton.addEventListener("click", () => {
 });
 
 const cebo = new Image();
-cebo.src = "Media/Images/cebo.png"; 
+cebo.src = "media/images/cebo.png"; 
 let ceboPosY = window_height / 2;  
 
 class Circle {
@@ -150,7 +150,7 @@ class Circle {
 }
 
 const barrilImage = new Image();
-barrilImage.src = "Media/Images/barril.png";
+barrilImage.src = "media/images/barril.png";
 
 class Barril {
     constructor(radius, speed, imageSrc) {
@@ -183,7 +183,7 @@ class Barril {
 }
 
 const tiburonImage = new Image();
-tiburonImage.src = "Media/Images/tiburon.png"; // Asegúrate de tener la imagen del tiburón
+tiburonImage.src = "media/images/tiburon.png"; // Asegúrate de tener la imagen del tiburón
 
 class Tiburon {
     constructor(radius, speed, imageSrc) {
@@ -220,7 +220,7 @@ function spawnCircles() {
     if (circles.length < maxCircles) {
         const radius = Math.random() * 20 + 30; 
         const constantSpeed = baseFishSpeed;
-        let newCircle = new Circle(radius, constantSpeed, "Media/Images/pez1.png");
+        let newCircle = new Circle(radius, constantSpeed, "media/images/pez1.png");
         circles.push(newCircle);
     }
 }
@@ -231,7 +231,7 @@ function spawnBarriles() {
     if (barriles.length < maxCircles) {
         const radius = Math.random() * 20 + 30; 
         const constantSpeed = 1;
-        let newBarril = new Barril(radius, constantSpeed, "Media/Images/barril.png");
+        let newBarril = new Barril(radius, constantSpeed, "media/images/barril.png");
         barriles.push(newBarril);
     }
 }
@@ -252,7 +252,7 @@ canvas.addEventListener("click", (event) => {
     const rect = canvas.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
-    const atrapadoSonido = new Audio("Media/Audio/atrapar_pez.mp3");
+    const atrapadoSonido = new Audio("media/audio/Atrapar_pez.mp3");
 
     if (mouseY <= 190) {
         for (let i = 0; i < circles.length; i++) {
@@ -303,7 +303,7 @@ function checkBarrilCollision() {
                 let distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < barril.radius + circle.radius) {
-                    const choqueSound = new Audio("Media/Audio/choque.mp3");
+                    const choqueSound = new Audio("media/audio/Choque.mp3");
                     choqueSound.play();
                     circles.splice(j, 1);
                     break;
@@ -326,7 +326,7 @@ function checkTiburonCollision() {
             updateStats();
 
             // Reproducir un sonido de choque (opcional)
-            const choqueSound = new Audio("Media/Audio/choque.mp3");
+            const choqueSound = new Audio("media/audio/Choque.mp3");
             choqueSound.play();
 
             // Eliminar el tiburón después de la colisión (opcional)
@@ -377,7 +377,7 @@ function updateCircles() {
     if (removedCircles >= 50 && Math.random() < 0.01) { // Probabilidad de generar un tiburón
         const radius = 100; // Tamaño más grande del tiburón
         const speed = 2; // Velocidad del tiburón
-        const newTiburon = new Tiburon(radius, speed, "Media/Images/tiburon.png");
+        const newTiburon = new Tiburon(radius, speed, "media/images/tiburon.png");
         tiburones.push(newTiburon);
     }
 
